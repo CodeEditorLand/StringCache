@@ -226,7 +226,7 @@ impl<Static: StaticAtomSet> Clone for Atom<Static> {
 }
 
 impl<Static> Drop for Atom<Static> {
-    #[inline]
+    #[inline(always)]
     fn drop(&mut self) {
         if self.tag() == DYNAMIC_TAG {
             let entry = self.unsafe_data.get() as *const Entry;
@@ -236,6 +236,8 @@ impl<Static> Drop for Atom<Static> {
         }
 
         // Out of line to guide inlining.
+        #[cold]
+        #[inline(never)]
         fn drop_slow<Static>(this: &mut Atom<Static>) {
             DYNAMIC_SET
                 .lock()
