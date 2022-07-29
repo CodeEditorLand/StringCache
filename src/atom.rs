@@ -218,9 +218,16 @@ impl<Static: StaticAtomSet> Clone for Atom<Static> {
     #[inline(always)]
     fn clone(&self) -> Self {
         if self.tag() == DYNAMIC_TAG {
-            let entry = self.unsafe_data.get() as *const Entry;
+            clone_slow(self.unsafe_data.get())
+        }
+
+        #[cold]
+        #[inline(never)]
+        fn clone_slow(ptr: u64) {
+            let entry = ptr as *const Entry;
             unsafe { &*entry }.ref_count.fetch_add(1, SeqCst);
         }
+
         Atom { ..*self }
     }
 }
