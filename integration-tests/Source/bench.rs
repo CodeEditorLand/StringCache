@@ -32,7 +32,7 @@ use test::{black_box, Bencher};
 
 // Just shorthand
 fn mk(x: &str) -> TestAtom {
-    TestAtom::from(x)
+	TestAtom::from(x)
 }
 
 macro_rules! check_type (($name:ident, $x:expr) => (
@@ -143,9 +143,9 @@ macro_rules! bench_all (
 );
 
 pub const longer_dynamic_a: &'static str =
-    "Thee Silver Mt. Zion Memorial Orchestra & Tra-La-La Band";
+	"Thee Silver Mt. Zion Memorial Orchestra & Tra-La-La Band";
 pub const longer_dynamic_b: &'static str =
-    "Thee Silver Mt. Zion Memorial Orchestra & Tra-La-La Ban!";
+	"Thee Silver Mt. Zion Memorial Orchestra & Tra-La-La Ban!";
 
 bench_all!([eq ne lt clone_string] for short_string = "e", "f");
 bench_all!([eq ne lt clone_string] for medium_string = "xyzzy01", "xyzzy02");

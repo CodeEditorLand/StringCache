@@ -102,7 +102,6 @@
 //!
 
 #![cfg_attr(test, deny(warnings))]
-
 // Types, such as Atom, that impl Hash must follow the hash invariant: if two objects match
 // with PartialEq, they must also have the same Hash. Clippy warns on types that derive one while
 // manually impl-ing the other, because it seems easy for the two to drift apart, causing the
@@ -133,7 +132,7 @@ pub type DefaultAtom = Atom<EmptyStaticAtomSet>;
 /// Guard against accidental changes to the sizes of things.
 #[test]
 fn assert_sizes() {
-    use std::mem::size_of;
-    assert_eq!(size_of::<DefaultAtom>(), 8);
-    assert_eq!(size_of::<Option<DefaultAtom>>(), size_of::<DefaultAtom>(),);
+	use std::mem::size_of;
+	assert_eq!(size_of::<DefaultAtom>(), 8);
+	assert_eq!(size_of::<Option<DefaultAtom>>(), size_of::<DefaultAtom>(),);
 }
