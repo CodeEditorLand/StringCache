@@ -158,7 +158,9 @@ impl<Static: StaticAtomSet> Atom<Static> {
 
 	fn try_static_internal(string_to_add: &str) -> Result<Self, phf_shared::Hashes> {
 		let static_set = Static::get();
+
 		let hash = phf_shared::hash(&*string_to_add, &static_set.key);
+
 		let index = phf_shared::get_index(&hash, static_set.disps, static_set.atoms.len());
 
 		if static_set.atoms[index as usize] == string_to_add {
@@ -309,6 +311,7 @@ impl<Static: StaticAtomSet> Ord for Atom<Static> {
 impl<Static: StaticAtomSet> Atom<Static> {
 	fn from_mutated_str<F: FnOnce(&mut str)>(s: &str, f: F) -> Self {
 		let mut buffer = mem::MaybeUninit::<[u8; 64]>::uninit();
+
 		let buffer = unsafe { &mut *buffer.as_mut_ptr() };
 
 		if let Some(buffer_prefix) = buffer.get_mut(..s.len()) {
@@ -366,6 +369,7 @@ impl<Static: StaticAtomSet> Atom<Static> {
 fn inline_atom_slice(x: &NonZeroU64) -> &[u8] {
 	unsafe {
 		let x: *const NonZeroU64 = x;
+
 		let mut data = x as *const u8;
 		// All except the lowest byte, which is first in little-endian, last in big-endian.
 		if cfg!(target_endian = "little") {
@@ -380,6 +384,7 @@ fn inline_atom_slice(x: &NonZeroU64) -> &[u8] {
 fn inline_atom_slice_mut(x: &mut u64) -> &mut [u8] {
 	unsafe {
 		let x: *mut u64 = x;
+
 		let mut data = x as *mut u8;
 		// All except the lowest byte, which is first in little-endian, last in big-endian.
 		if cfg!(target_endian = "little") {

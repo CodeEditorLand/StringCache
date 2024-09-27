@@ -44,7 +44,9 @@ fn entry_alignment_is_sufficient() {
 pub(crate) static DYNAMIC_SET: Lazy<Mutex<Set>> = Lazy::new(|| {
 	Mutex::new({
 		type T = Option<Box<Entry>>;
+
 		let _static_assert_size_eq = std::mem::transmute::<T, usize>;
+
 		let vec = std::mem::ManuallyDrop::new(vec![0_usize; NB_BUCKETS]);
 		Set { buckets: unsafe { Box::from_raw(vec.as_ptr() as *mut [T; NB_BUCKETS]) } }
 	})
@@ -73,13 +75,16 @@ impl Set {
 			}
 		}
 		debug_assert!(mem::align_of::<Entry>() >= ENTRY_ALIGNMENT);
+
 		let string = string.into_owned();
+
 		let mut entry = Box::new(Entry {
 			next_in_bucket: self.buckets[bucket_index].take(),
 			hash,
 			ref_count: AtomicIsize::new(1),
 			string: string.into_boxed_str(),
 		});
+
 		let ptr = NonNull::from(&mut *entry);
 		self.buckets[bucket_index] = Some(entry);
 

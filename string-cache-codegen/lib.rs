@@ -189,11 +189,17 @@ impl AtomType {
 		self.atoms.insert(String::new());
 
 		let atoms: Vec<&str> = self.atoms.iter().map(|s| &**s).collect();
+
 		let hash_state = phf_generator::generate_hash(&atoms);
+
 		let phf_generator::HashState { key, disps, map } = hash_state;
+
 		let (disps0, disps1): (Vec<_>, Vec<_>) = disps.into_iter().unzip();
+
 		let atoms: Vec<&str> = map.iter().map(|&idx| atoms[idx]).collect();
+
 		let empty_string_index = atoms.iter().position(|s| s.is_empty()).unwrap() as u32;
+
 		let indices = 0..atoms.len() as u32;
 
 		let hashes: Vec<u32> = atoms
@@ -205,30 +211,42 @@ impl AtomType {
 			.collect();
 
 		let mut path_parts = self.path.rsplitn(2, "::");
+
 		let type_name = path_parts.next().unwrap();
+
 		let module = match path_parts.next() {
 			Some(m) => format!("$crate::{}", m),
 			None => format!("$crate"),
 		};
+
 		let atom_doc = match self.atom_doc {
 			Some(ref doc) => quote!(#[doc = #doc]),
 			None => quote!(),
 		};
+
 		let static_set_doc = match self.static_set_doc {
 			Some(ref doc) => quote!(#[doc = #doc]),
 			None => quote!(),
 		};
+
 		let macro_doc = match self.macro_doc {
 			Some(ref doc) => quote!(#[doc = #doc]),
 			None => quote!(),
 		};
+
 		let new_term =
 			|string: &str| proc_macro2::Ident::new(string, proc_macro2::Span::call_site());
+
 		let static_set_name = new_term(&format!("{}StaticSet", type_name));
+
 		let type_name = new_term(type_name);
+
 		let macro_name = new_term(&*self.macro_name);
+
 		let module = module.parse::<proc_macro2::TokenStream>().unwrap();
+
 		let atom_prefix = format!("ATOM_{}_", type_name.to_string().to_uppercase());
+
 		let const_names: Vec<_> = atoms
 			.iter()
 			.map(|atom| {
