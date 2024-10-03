@@ -16,10 +16,10 @@
 ///
 /// [`Atom`]: struct.Atom.html
 pub trait StaticAtomSet: Ord {
-    /// Get the location of the static string set in the binary.
-    fn get() -> &'static PhfStrSet;
-    /// Get the index of the empty string, which is in every set and is used for `Atom::default`.
-    fn empty_string_index() -> u32;
+	/// Get the location of the static string set in the binary.
+	fn get() -> &'static PhfStrSet;
+	/// Get the index of the empty string, which is in every set and is used for `Atom::default`.
+	fn empty_string_index() -> u32;
 }
 
 /// A string set created using a [perfect hash function], specifically
@@ -30,14 +30,14 @@ pub trait StaticAtomSet: Ord {
 /// [perfect hash function]: https://en.wikipedia.org/wiki/Perfect_hash_function
 /// [Hash, Displace and Compress]: http://cmph.sourceforge.net/papers/esa09.pdf
 pub struct PhfStrSet {
-    #[doc(hidden)]
-    pub key: u64,
-    #[doc(hidden)]
-    pub disps: &'static [(u32, u32)],
-    #[doc(hidden)]
-    pub atoms: &'static [&'static str],
-    #[doc(hidden)]
-    pub hashes: &'static [u32],
+	#[doc(hidden)]
+	pub key: u64,
+	#[doc(hidden)]
+	pub disps: &'static [(u32, u32)],
+	#[doc(hidden)]
+	pub atoms: &'static [&'static str],
+	#[doc(hidden)]
+	pub hashes: &'static [u32],
 }
 
 /// An empty static atom set for when only dynamic strings will be added
@@ -45,20 +45,20 @@ pub struct PhfStrSet {
 pub struct EmptyStaticAtomSet;
 
 impl StaticAtomSet for EmptyStaticAtomSet {
-    fn get() -> &'static PhfStrSet {
-        // The name is a lie: this set is not empty (it contains the empty string)
-        // but that’s only to avoid divisions by zero in rust-phf.
-        static SET: PhfStrSet = PhfStrSet {
-            key: 0,
-            disps: &[(0, 0)],
-            atoms: &[""],
-            // "" SipHash'd, and xored with u64_hash_to_u32.
-            hashes: &[0x3ddddef3],
-        };
-        &SET
-    }
+	fn get() -> &'static PhfStrSet {
+		// The name is a lie: this set is not empty (it contains the empty string)
+		// but that’s only to avoid divisions by zero in rust-phf.
+		static SET: PhfStrSet = PhfStrSet {
+			key: 0,
+			disps: &[(0, 0)],
+			atoms: &[""],
+			// "" SipHash'd, and xored with u64_hash_to_u32.
+			hashes: &[0x3ddddef3],
+		};
+		&SET
+	}
 
-    fn empty_string_index() -> u32 {
-        0
-    }
+	fn empty_string_index() -> u32 {
+		0
+	}
 }
