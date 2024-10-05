@@ -4,7 +4,8 @@
 
 [Documentation](https://docs.rs/string_cache/)
 
-A string interning library for Rust, developed as part of the [Servo](https://github.com/servo/servo) project.
+A string interning library for Rust, developed as part of the
+[Servo](https://github.com/servo/servo) project.
 
 ## Simple usage
 
@@ -63,8 +64,8 @@ mod foo {
 }
 ```
 
-The generated code will define a `FooAtom` type and a `foo_atom!` macro.
-The macro can be used in expression or patterns, with strings listed in `build.rs`.
+The generated code will define a `FooAtom` type and a `foo_atom!` macro. The
+macro can be used in expression or patterns, with strings listed in `build.rs`.
 For example:
 
 ```rust

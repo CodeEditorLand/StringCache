@@ -7,33 +7,28 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-/*
-
-A cautionary note about these benchmarks:
-
-Many of the operations we're attempting to measure take less than one
-nanosecond. That's why we run them thousands of times in a loop just to get a
-single iteration that Rust's statistical benchmarking can work with. At that
-scale, any change anywhere in the library can produce durable performance
-regressions on the order of half a nanosecond, i.e. "500 ns" in the output for
-a test like eq_x_1000.
-
-We can't get anything done if we rachet on these numbers! They are more useful
-for selecting between alternatives, and for noticing large regressions or
-inconsistencies.
-
-Furthermore, a large part of the point of interning is to make strings small
-and cheap to move around, which isn't reflected in these tests.
-
-*/
-use crate::TestAtom;
-
+// A cautionary note about these benchmarks:
+//
+// Many of the operations we're attempting to measure take less than one
+// nanosecond. That's why we run them thousands of times in a loop just to get a
+// single iteration that Rust's statistical benchmarking can work with. At that
+// scale, any change anywhere in the library can produce durable performance
+// regressions on the order of half a nanosecond, i.e. "500 ns" in the output
+// for a test like eq_x_1000.
+//
+// We can't get anything done if we rachet on these numbers! They are more
+// useful for selecting between alternatives, and for noticing large regressions
+// or inconsistencies.
+//
+// Furthermore, a large part of the point of interning is to make strings small
+// and cheap to move around, which isn't reflected in these tests.
+//
 use test::{black_box, Bencher};
 
+use crate::TestAtom;
+
 // Just shorthand
-fn mk(x: &str) -> TestAtom {
-	TestAtom::from(x)
-}
+fn mk(x:&str) -> TestAtom { TestAtom::from(x) }
 
 macro_rules! check_type (($name:ident, $x:expr) => (
     // NB: "cargo bench" does not run these!
@@ -142,9 +137,9 @@ macro_rules! bench_all (
     );
 );
 
-pub const longer_dynamic_a: &'static str =
+pub const longer_dynamic_a:&'static str =
 	"Thee Silver Mt. Zion Memorial Orchestra & Tra-La-La Band";
-pub const longer_dynamic_b: &'static str =
+pub const longer_dynamic_b:&'static str =
 	"Thee Silver Mt. Zion Memorial Orchestra & Tra-La-La Ban!";
 
 bench_all!([eq ne lt clone_string] for short_string = "e", "f");

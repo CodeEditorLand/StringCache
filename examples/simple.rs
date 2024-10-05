@@ -2,8 +2,8 @@ use string_cache::DefaultAtom;
 
 fn main() {
 	let mut interned_stuff = Vec::new();
-	let text = "here is a sentence of text that will be tokenised and interned and some repeated \
-                tokens is of text and";
+	let text = "here is a sentence of text that will be tokenised and \
+	            interned and some repeated tokens is of text and";
 	for word in text.split_whitespace() {
 		let seen_before = interned_stuff
             .iter()
@@ -17,8 +17,8 @@ fn main() {
 		} else {
 			println!(r#"Not seen the word "{}" before"#, word);
 		}
-		// We use the impl From<(Cow<'a, str>, or &'a str, or String) for Atom<Static> to intern a
-		// new string
+		// We use the impl From<(Cow<'a, str>, or &'a str, or String) for
+		// Atom<Static> to intern a new string
 		interned_stuff.push(DefaultAtom::from(word));
 	}
 }

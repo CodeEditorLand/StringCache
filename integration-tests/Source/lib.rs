@@ -16,6 +16,7 @@
 extern crate test;
 
 use std::thread;
+
 use string_cache::StaticAtomSet;
 
 include!(concat!(env!("OUT_DIR"), "/test_atom.rs"));
@@ -95,7 +96,7 @@ fn default() {
 
 #[test]
 fn ord() {
-	fn check(x: &str, y: &str) {
+	fn check(x:&str, y:&str) {
 		assert_eq!(x < y, Atom::from(x) < Atom::from(y));
 		assert_eq!(x.cmp(y), Atom::from(x).cmp(&Atom::from(y)));
 		assert_eq!(x.partial_cmp(y), Atom::from(x).partial_cmp(&Atom::from(y)));
@@ -152,15 +153,22 @@ macro_rules! assert_eq_fmt (($fmt:expr, $x:expr, $y:expr) => ({
 
 #[test]
 fn repr() {
-	fn check(s: &str, data: u64) {
+	fn check(s:&str, data:u64) {
 		assert_eq_fmt!("0x{:016X}", Atom::from(s).unsafe_data(), data);
 	}
 
-	fn check_static(s: &str, x: Atom) {
-		assert_eq_fmt!("0x{:016X}", x.unsafe_data(), Atom::from(s).unsafe_data());
+	fn check_static(s:&str, x:Atom) {
+		assert_eq_fmt!(
+			"0x{:016X}",
+			x.unsafe_data(),
+			Atom::from(s).unsafe_data()
+		);
 		assert_eq!(0x2, x.unsafe_data() & 0xFFFF_FFFF);
 		// The index is unspecified by phf.
-		assert!((x.unsafe_data() >> 32) <= TestAtomStaticSet::get().atoms.len() as u64);
+		assert!(
+			(x.unsafe_data() >> 32)
+				<= TestAtomStaticSet::get().atoms.len() as u64
+		);
 	}
 
 	// This test is here to make sure we don't change atom representation
@@ -178,7 +186,7 @@ fn repr() {
 	check("xyzzy01", 0x3130_797A_7A79_7871);
 
 	// Dynamic atoms. This is a pointer so we can't verify every bit.
-	assert_eq!(0x00, Atom::from("a dynamic string").unsafe_data() & 0xf);
+	assert_eq!(0x00, Atom::from("a dynamic string").unsafe_data() & 0xF);
 }
 
 #[test]
@@ -231,14 +239,14 @@ fn match_atom() {
 fn ensure_deref() {
 	// Ensure we can Deref to a &str
 	let atom = Atom::from("foobar");
-	let _: &str = &atom;
+	let _:&str = &atom;
 }
 
 #[test]
 fn ensure_as_ref() {
 	// Ensure we can as_ref to a &str
 	let atom = Atom::from("foobar");
-	let _: &str = atom.as_ref();
+	let _:&str = atom.as_ref();
 }
 
 #[test]
@@ -249,7 +257,10 @@ fn test_ascii_lowercase() {
 		Atom::from("The Quick Brown Fox!").to_ascii_lowercase(),
 		Atom::from("the quick brown fox!")
 	);
-	assert_eq!(Atom::from("JE VAIS À PARIS").to_ascii_lowercase(), Atom::from("je vais À paris"));
+	assert_eq!(
+		Atom::from("JE VAIS À PARIS").to_ascii_lowercase(),
+		Atom::from("je vais À paris")
+	);
 }
 
 #[test]
@@ -260,7 +271,10 @@ fn test_ascii_uppercase() {
 		Atom::from("The Quick Brown Fox!").to_ascii_uppercase(),
 		Atom::from("THE QUICK BROWN FOX!")
 	);
-	assert_eq!(Atom::from("Je vais à Paris").to_ascii_uppercase(), Atom::from("JE VAIS à PARIS"));
+	assert_eq!(
+		Atom::from("Je vais à Paris").to_ascii_uppercase(),
+		Atom::from("JE VAIS à PARIS")
+	);
 }
 
 #[test]
@@ -268,15 +282,25 @@ fn test_eq_ignore_ascii_case() {
 	assert!(Atom::from("").eq_ignore_ascii_case(&Atom::from("")));
 	assert!(Atom::from("aZ9").eq_ignore_ascii_case(&Atom::from("aZ9")));
 	assert!(Atom::from("aZ9").eq_ignore_ascii_case(&Atom::from("Az9")));
-	assert!(Atom::from("The Quick Brown Fox!")
-		.eq_ignore_ascii_case(&Atom::from("THE quick BROWN fox!")));
-	assert!(Atom::from("Je vais à Paris").eq_ignore_ascii_case(&Atom::from("je VAIS à PARIS")));
+	assert!(
+		Atom::from("The Quick Brown Fox!")
+			.eq_ignore_ascii_case(&Atom::from("THE quick BROWN fox!"))
+	);
+	assert!(
+		Atom::from("Je vais à Paris")
+			.eq_ignore_ascii_case(&Atom::from("je VAIS à PARIS"))
+	);
 	assert!(!Atom::from("").eq_ignore_ascii_case(&Atom::from("az9")));
 	assert!(!Atom::from("aZ9").eq_ignore_ascii_case(&Atom::from("")));
 	assert!(!Atom::from("aZ9").eq_ignore_ascii_case(&Atom::from("9Za")));
-	assert!(!Atom::from("The Quick Brown Fox!")
-		.eq_ignore_ascii_case(&Atom::from("THE quick BROWN fox!!")));
-	assert!(!Atom::from("Je vais à Paris").eq_ignore_ascii_case(&Atom::from("JE vais À paris")));
+	assert!(
+		!Atom::from("The Quick Brown Fox!")
+			.eq_ignore_ascii_case(&Atom::from("THE quick BROWN fox!!"))
+	);
+	assert!(
+		!Atom::from("Je vais à Paris")
+			.eq_ignore_ascii_case(&Atom::from("JE vais À paris"))
+	);
 }
 
 #[test]
