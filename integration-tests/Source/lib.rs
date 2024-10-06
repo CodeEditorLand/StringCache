@@ -158,17 +158,10 @@ fn repr() {
 	}
 
 	fn check_static(s:&str, x:Atom) {
-		assert_eq_fmt!(
-			"0x{:016X}",
-			x.unsafe_data(),
-			Atom::from(s).unsafe_data()
-		);
+		assert_eq_fmt!("0x{:016X}", x.unsafe_data(), Atom::from(s).unsafe_data());
 		assert_eq!(0x2, x.unsafe_data() & 0xFFFF_FFFF);
 		// The index is unspecified by phf.
-		assert!(
-			(x.unsafe_data() >> 32)
-				<= TestAtomStaticSet::get().atoms.len() as u64
-		);
+		assert!((x.unsafe_data() >> 32) <= TestAtomStaticSet::get().atoms.len() as u64);
 	}
 
 	// This test is here to make sure we don't change atom representation
@@ -286,10 +279,7 @@ fn test_eq_ignore_ascii_case() {
 		Atom::from("The Quick Brown Fox!")
 			.eq_ignore_ascii_case(&Atom::from("THE quick BROWN fox!"))
 	);
-	assert!(
-		Atom::from("Je vais à Paris")
-			.eq_ignore_ascii_case(&Atom::from("je VAIS à PARIS"))
-	);
+	assert!(Atom::from("Je vais à Paris").eq_ignore_ascii_case(&Atom::from("je VAIS à PARIS")));
 	assert!(!Atom::from("").eq_ignore_ascii_case(&Atom::from("az9")));
 	assert!(!Atom::from("aZ9").eq_ignore_ascii_case(&Atom::from("")));
 	assert!(!Atom::from("aZ9").eq_ignore_ascii_case(&Atom::from("9Za")));
@@ -297,10 +287,7 @@ fn test_eq_ignore_ascii_case() {
 		!Atom::from("The Quick Brown Fox!")
 			.eq_ignore_ascii_case(&Atom::from("THE quick BROWN fox!!"))
 	);
-	assert!(
-		!Atom::from("Je vais à Paris")
-			.eq_ignore_ascii_case(&Atom::from("JE vais À paris"))
-	);
+	assert!(!Atom::from("Je vais à Paris").eq_ignore_ascii_case(&Atom::from("JE vais À paris")));
 }
 
 #[test]

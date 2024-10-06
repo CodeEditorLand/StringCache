@@ -35,9 +35,7 @@
 //! fn main() {
 //! 	string_cache_codegen::AtomType::new("foo::FooAtom", "foo_atom!")
 //! 		.atoms(&["foo", "bar"])
-//! 		.write_to_file(
-//! 			&Path::new(&env::var("OUT_DIR").unwrap()).join("foo_atom.rs"),
-//! 		)
+//! 		.write_to_file(&Path::new(&env::var("OUT_DIR").unwrap()).join("foo_atom.rs"))
 //! 		.unwrap()
 //! }
 //! ```
@@ -201,8 +199,7 @@ impl AtomType {
 
 		let atoms:Vec<&str> = map.iter().map(|&idx| atoms[idx]).collect();
 
-		let empty_string_index =
-			atoms.iter().position(|s| s.is_empty()).unwrap() as u32;
+		let empty_string_index = atoms.iter().position(|s| s.is_empty()).unwrap() as u32;
 
 		let indices = 0..atoms.len() as u32;
 
@@ -238,9 +235,8 @@ impl AtomType {
 			None => quote!(),
 		};
 
-		let new_term = |string:&str| {
-			proc_macro2::Ident::new(string, proc_macro2::Span::call_site())
-		};
+		let new_term =
+			|string:&str| proc_macro2::Ident::new(string, proc_macro2::Span::call_site());
 
 		let static_set_name = new_term(&format!("{}StaticSet", type_name));
 
@@ -250,8 +246,7 @@ impl AtomType {
 
 		let module = module.parse::<proc_macro2::TokenStream>().unwrap();
 
-		let atom_prefix =
-			format!("ATOM_{}_", type_name.to_string().to_uppercase());
+		let atom_prefix = format!("ATOM_{}_", type_name.to_string().to_uppercase());
 
 		let const_names:Vec<_> = atoms
 			.iter()

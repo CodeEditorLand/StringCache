@@ -103,9 +103,7 @@ impl<Static> Atom<Static> {
 		Self {
 			unsafe_data:unsafe {
 				// STATIC_TAG ensures this is non-zero
-				NonZeroU64::new_unchecked(
-					(STATIC_TAG as u64) | ((n as u64) << STATIC_SHIFT_BITS),
-				)
+				NonZeroU64::new_unchecked((STATIC_TAG as u64) | ((n as u64) << STATIC_SHIFT_BITS))
 			},
 			phantom:PhantomData,
 		}
@@ -131,9 +129,7 @@ impl<Static:StaticAtomSet> Atom<Static> {
 	#[doc(hidden)]
 	pub fn is_inline(&self) -> bool { self.tag() == INLINE_TAG }
 
-	fn static_index(&self) -> u64 {
-		self.unsafe_data.get() >> STATIC_SHIFT_BITS
-	}
+	fn static_index(&self) -> u64 { self.unsafe_data.get() >> STATIC_SHIFT_BITS }
 
 	/// Get the hash of the string as it is stored in the set.
 	pub fn get_hash(&self) -> u32 {
@@ -156,18 +152,12 @@ impl<Static:StaticAtomSet> Atom<Static> {
 		Self::try_static_internal(string_to_add).ok()
 	}
 
-	fn try_static_internal(
-		string_to_add:&str,
-	) -> Result<Self, phf_shared::Hashes> {
+	fn try_static_internal(string_to_add:&str) -> Result<Self, phf_shared::Hashes> {
 		let static_set = Static::get();
 
 		let hash = phf_shared::hash(&*string_to_add, &static_set.key);
 
-		let index = phf_shared::get_index(
-			&hash,
-			static_set.disps,
-			static_set.atoms.len(),
-		);
+		let index = phf_shared::get_index(&hash, static_set.disps, static_set.atoms.len());
 
 		if static_set.atoms[index as usize] == string_to_add {
 			Ok(Self::pack_static(index))
@@ -196,8 +186,7 @@ impl<'a, Static:StaticAtomSet> From<Cow<'a, str>> for Atom<Static> {
 		Self::try_static_internal(&*string_to_add).unwrap_or_else(|hash| {
 			let len = string_to_add.len();
 			if len <= MAX_INLINE_LEN {
-				let mut data:u64 =
-					(INLINE_TAG as u64) | ((len as u64) << LEN_OFFSET);
+				let mut data:u64 = (INLINE_TAG as u64) | ((len as u64) << LEN_OFFSET);
 				{
 					let dest = inline_atom_slice_mut(&mut data);
 					dest[..len].copy_from_slice(string_to_add.as_bytes())
@@ -245,10 +234,7 @@ impl<Static> Drop for Atom<Static> {
 
 		// Out of line to guide inlining.
 		fn drop_slow<Static>(this:&mut Atom<Static>) {
-			DYNAMIC_SET
-				.lock()
-				.unwrap()
-				.remove(this.unsafe_data.get() as *mut Entry);
+			DYNAMIC_SET.lock().unwrap().remove(this.unsafe_data.get() as *mut Entry);
 		}
 	}
 }
@@ -323,8 +309,7 @@ impl<Static:StaticAtomSet> Atom<Static> {
 
 		if let Some(buffer_prefix) = buffer.get_mut(..s.len()) {
 			buffer_prefix.copy_from_slice(s.as_bytes());
-			let as_str =
-				unsafe { ::std::str::from_utf8_unchecked_mut(buffer_prefix) };
+			let as_str = unsafe { ::std::str::from_utf8_unchecked_mut(buffer_prefix) };
 			f(as_str);
 			Atom::from(&*as_str)
 		} else {
@@ -340,9 +325,7 @@ impl<Static:StaticAtomSet> Atom<Static> {
 	pub fn to_ascii_uppercase(&self) -> Self {
 		for (i, b) in self.bytes().enumerate() {
 			if let b'a'..=b'z' = b {
-				return Atom::from_mutated_str(self, |s| {
-					s[i..].make_ascii_uppercase()
-				});
+				return Atom::from_mutated_str(self, |s| s[i..].make_ascii_uppercase());
 			}
 		}
 		self.clone()
@@ -354,9 +337,7 @@ impl<Static:StaticAtomSet> Atom<Static> {
 	pub fn to_ascii_lowercase(&self) -> Self {
 		for (i, b) in self.bytes().enumerate() {
 			if let b'A'..=b'Z' = b {
-				return Atom::from_mutated_str(self, |s| {
-					s[i..].make_ascii_lowercase()
-				});
+				return Atom::from_mutated_str(self, |s| s[i..].make_ascii_lowercase());
 			}
 		}
 		self.clone()

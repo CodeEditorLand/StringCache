@@ -14,9 +14,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::{Atom, StaticAtomSet};
 
-impl<Static:StaticAtomSet> ::precomputed_hash::PrecomputedHash
-	for Atom<Static>
-{
+impl<Static:StaticAtomSet> ::precomputed_hash::PrecomputedHash for Atom<Static> {
 	fn precomputed_hash(&self) -> u32 { self.get_hash() }
 }
 
@@ -38,23 +36,17 @@ impl<Static:StaticAtomSet> PartialEq<String> for Atom<Static> {
 
 impl<'a, Static:StaticAtomSet> From<&'a str> for Atom<Static> {
 	#[inline]
-	fn from(string_to_add:&str) -> Self {
-		Atom::from(Cow::Borrowed(string_to_add))
-	}
+	fn from(string_to_add:&str) -> Self { Atom::from(Cow::Borrowed(string_to_add)) }
 }
 
 impl<Static:StaticAtomSet> From<String> for Atom<Static> {
 	#[inline]
-	fn from(string_to_add:String) -> Self {
-		Atom::from(Cow::Owned(string_to_add))
-	}
+	fn from(string_to_add:String) -> Self { Atom::from(Cow::Owned(string_to_add)) }
 }
 
 impl<Static:StaticAtomSet> fmt::Display for Atom<Static> {
 	#[inline]
-	fn fmt(&self, f:&mut fmt::Formatter) -> fmt::Result {
-		<str as fmt::Display>::fmt(self, f)
-	}
+	fn fmt(&self, f:&mut fmt::Formatter) -> fmt::Result { <str as fmt::Display>::fmt(self, f) }
 }
 
 impl<Static:StaticAtomSet> AsRef<str> for Atom<Static> {

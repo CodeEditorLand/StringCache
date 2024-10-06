@@ -49,24 +49,15 @@ pub(crate) static DYNAMIC_SET:Lazy<Mutex<Set>> = Lazy::new(|| {
 		let _static_assert_size_eq = std::mem::transmute::<T, usize>;
 
 		let vec = std::mem::ManuallyDrop::new(vec![0_usize; NB_BUCKETS]);
-		Set {
-			buckets:unsafe {
-				Box::from_raw(vec.as_ptr() as *mut [T; NB_BUCKETS])
-			},
-		}
+		Set { buckets:unsafe { Box::from_raw(vec.as_ptr() as *mut [T; NB_BUCKETS]) } }
 	})
 });
 
 impl Set {
-	pub(crate) fn insert(
-		&mut self,
-		string:Cow<str>,
-		hash:u32,
-	) -> NonNull<Entry> {
+	pub(crate) fn insert(&mut self, string:Cow<str>, hash:u32) -> NonNull<Entry> {
 		let bucket_index = (hash & BUCKET_MASK) as usize;
 		{
-			let mut ptr:Option<&mut Box<Entry>> =
-				self.buckets[bucket_index].as_mut();
+			let mut ptr:Option<&mut Box<Entry>> = self.buckets[bucket_index].as_mut();
 
 			while let Some(entry) = ptr.take() {
 				if entry.hash == hash && *entry.string == *string {
@@ -109,15 +100,12 @@ impl Set {
 			(value.hash & BUCKET_MASK) as usize
 		};
 
-		let mut current:&mut Option<Box<Entry>> =
-			&mut self.buckets[bucket_index];
+		let mut current:&mut Option<Box<Entry>> = &mut self.buckets[bucket_index];
 
 		while let Some(entry_ptr) = current.as_mut() {
 			let entry_ptr:*mut Entry = &mut **entry_ptr;
 			if entry_ptr == ptr {
-				mem::drop(mem::replace(current, unsafe {
-					(*entry_ptr).next_in_bucket.take()
-				}));
+				mem::drop(mem::replace(current, unsafe { (*entry_ptr).next_in_bucket.take() }));
 				break;
 			}
 			current = unsafe { &mut (*entry_ptr).next_in_bucket };
