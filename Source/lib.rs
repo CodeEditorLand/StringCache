@@ -7,14 +7,15 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-//!
 //! A library for interning things that are `AsRef<str>`.
 //!
-//! Some strings may be interned at compile time using the `string-cache-codegen` crate, or the
-//! `EmptyStaticAtomSet` may be used that has no compile-time interned strings. An `Atom` is an
-//! interned string for a given set (either `EmptyStaticAtomSet` or a generated `StaticAtomSet`).
+//! Some strings may be interned at compile time using the
+//! `string-cache-codegen` crate, or the `EmptyStaticAtomSet` may be used that
+//! has no compile-time interned strings. An `Atom` is an interned string for a
+//! given set (either `EmptyStaticAtomSet` or a generated `StaticAtomSet`).
 //!
-//! Generated `Atom`s will have assocated macros to intern static strings at compile-time.
+//! Generated `Atom`s will have assocated macros to intern static strings at
+//! compile-time.
 //!
 //! # Examples
 //!
@@ -81,28 +82,26 @@
 //! let text = "here is a sentence of text that will be tokenised and
 //!             interned and some repeated tokens is of text and";
 //! for word in text.split_whitespace() {
-//!     let seen_before = interned_stuff.iter()
+//! 	let seen_before = interned_stuff.iter()
 //!         // We can use impl PartialEq<T> where T is anything string-like
 //!         // to compare to interned strings to either other interned strings,
 //!         // or actual strings  Comparing two interned strings is very fast
 //!         // (normally a single cpu operation).
 //!         .filter(|interned_word| interned_word == &word)
 //!         .count();
-//!     if seen_before > 0 {
-//!         println!(r#"Seen the word "{}" {} times"#, word, seen_before);
-//!     } else {
-//!         println!(r#"Not seen the word "{}" before"#, word);
-//!     }
-//!     // We use the impl From<(Cow<'a, str>, or &'a str, or String)> for
-//!     // Atom<Static> to intern a new string.
-//!     interned_stuff.push(DefaultAtom::from(word));
+//! 	if seen_before > 0 {
+//! 		println!(r#"Seen the word "{}" {} times"#, word, seen_before);
+//! 	} else {
+//! 		println!(r#"Not seen the word "{}" before"#, word);
+//! 	}
+//! 	// We use the impl From<(Cow<'a, str>, or &'a str, or String)> for
+//! 	// Atom<Static> to intern a new string.
+//! 	interned_stuff.push(DefaultAtom::from(word));
 //! }
 //! # }
 //! ```
-//!
 
 #![cfg_attr(test, deny(warnings))]
-
 // Types, such as Atom, that impl Hash must follow the hash invariant: if two objects match
 // with PartialEq, they must also have the same Hash. Clippy warns on types that derive one while
 // manually impl-ing the other, because it seems easy for the two to drift apart, causing the
@@ -133,7 +132,7 @@ pub type DefaultAtom = Atom<EmptyStaticAtomSet>;
 /// Guard against accidental changes to the sizes of things.
 #[test]
 fn assert_sizes() {
-    use std::mem::size_of;
-    assert_eq!(size_of::<DefaultAtom>(), 8);
-    assert_eq!(size_of::<Option<DefaultAtom>>(), size_of::<DefaultAtom>(),);
+	use std::mem::size_of;
+	assert_eq!(size_of::<DefaultAtom>(), 8);
+	assert_eq!(size_of::<Option<DefaultAtom>>(), size_of::<DefaultAtom>(),);
 }

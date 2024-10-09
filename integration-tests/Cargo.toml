@@ -1,7 +1,7 @@
 [package]
 name = "integration_tests"
 version = "0.0.1"
-authors = [ "The Servo Project Developers" ]
+authors = ["The Servo Project Developers"]
 build = "build.rs"
 publish = false
 edition = "2018"
