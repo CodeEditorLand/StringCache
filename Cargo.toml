@@ -16,6 +16,7 @@ edition = "2018"
 
 [lib]
 name = "string_cache"
+path = "Source/lib.rs"
 
 [features]
 serde_support = ["serde"]

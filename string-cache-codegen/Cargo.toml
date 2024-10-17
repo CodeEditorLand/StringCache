@@ -10,6 +10,7 @@ edition = "2018"
 
 [lib]
 name = "string_cache_codegen"
+path = "Source/lib.rs"
 path = "lib.rs"
 
 [dependencies]

@@ -8,6 +8,7 @@ edition = "2018"
 
 [lib]
 doctest = false
+path = "Source/lib.rs"
 test = true
 
 [features]
